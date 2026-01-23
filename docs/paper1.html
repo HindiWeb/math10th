@@ -24,13 +24,91 @@
   font-family: 'Times New Roman', Times, serif;
   font-size: medium;
 }
+#timer {
+  font-weight: bold;
+  color: #000;
+}
+#version {
+  font-weight: bold;
+  color: #5119;
+  font-family: 'Courier New', Courier, monospace;
+}
+img {
+  max-width: 250px;
+}
 
       </style>
-      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+      <!-- The content below will be included at the end of the <head> element. --><script src="https://hindiweb.github.io/lib/Upopup/2.5/popup.min.js"></script>
+<script src="https://hindiweb.github.io/math10th/script.js"></script>
+<script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
+    hwPanel('<div id="timer"></div>');
     // your code here
+    (function() {
+        const text = document.querySelector('.markdown-preview p')?.innerText || '';
+        const time = Number(text.match(/Time:\s*(\d+)/)?.[1] ?? 45);
+
+        const m = time;         // max count in minutes
+        const t = m + 10;    // stale limit in minutes
+
+        const url = new URL(window.location.href);
+        const STORAGE_KEY = `timer_start_${url.pathname.split('/').pop()}`;
+        const timerEl = document.getElementById("timer");
+
+        // --- utility functions ---
+        const now = () => Date.now();
+        const toMs = min => min * 60 * 1000;
+        const format = ms => {
+            const s = Math.floor(ms / 1000);
+            const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+            const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+            const ss = String(s % 60).padStart(2, '0');
+            return `${hh}:${mm}:${ss}`;
+        };
+
+        // --- check stored start time ---
+        let startTime = Number(localStorage.getItem(STORAGE_KEY));
+
+        if (!startTime) {
+            startTime = now();
+            localStorage.setItem(STORAGE_KEY, startTime);
+        } else {
+            const diff = now() - startTime;
+            if (diff > toMs(t)) {
+                // stale -> reset
+                startTime = now();
+                localStorage.setItem(STORAGE_KEY, startTime);
+            }
+        }
+
+        // --- timer loop ---
+        const maxMs = toMs(m);
+        let interval = setInterval(() => {
+            const elapsed = now() - startTime;
+
+            if (elapsed >= maxMs) {
+                clearInterval(interval);
+                timerEl.innerHTML = `00:${String(m).padStart(2,'0')}:00<br><span class="text-danger fw-bold blink">Time is up!</span>`;
+                timerEl.style.color = "red";
+                return;
+            }
+
+            timerEl.textContent = format(elapsed);
+        }, 1000);
+
+        // optional blinking effect using CSS
+        const style = document.createElement('style');
+        style.textContent = `
+        .blink { animation: blink 1s step-start 0s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+
+    })();
+
   });
-</script></head><body for="html-export">
+</script>
+</head><body for="html-export">
     
     
       <div class="crossnote markdown-preview  ">
@@ -167,7 +245,7 @@
 <li>Three coins are tossed together.<br>
 (i) Write all possible outcomes.<br>
 (ii) Find the probability of having at most 2 heads.</li>
-<li>Find the ratio in which a line segment joining the points <span class="mathjax-exps">$(1,1)$</span> and <span class="mathjax-exps">$(5,4)$</span> is divided by the <span class="mathjax-exps">$y$</span>-axis.</li>
+<li>Find the ratio in which a line segment joining the points <span class="mathjax-exps">$(-1,1)$</span> and <span class="mathjax-exps">$(5,4)$</span> is divided by the <span class="mathjax-exps">$y$</span>-axis.</li>
 </ol>
 <hr>
 
