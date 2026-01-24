@@ -22,7 +22,7 @@ window.addEventListener("DOMContentLoaded", function () {
             etag = res.headers.get("etag");
             const v = (await res.text()).trim();
             if (currentVersion && v !== currentVersion) location.reload(true); // reload when currentVersion is set and version changed
-            if (v !== currentVersion) renderVersion(v);
+            renderVersion(v);
             currentVersion = v;
         }
     }
