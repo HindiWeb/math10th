@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRY </title>
+    <script src="https://hindiweb.github.io/lib/Upopup/2.5/popup.min.js"></script>
+
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <script>
+        hwPanel('<div id="timer">0:0:0</div>');
+        // your code here
+        popup('https://hindiweb.github.io/lib/Upopup/2.5/popup.min.js', 5);
+        new HwAlert({ title: 'Update Complete', buttons : ['OK'], overlay: true, message: 'The update has been completed. The page is now reloading.', callback: function (i) { popup(i) }}).show();
+
+
+
+
+    </script>
+</body>
+
+</html>
