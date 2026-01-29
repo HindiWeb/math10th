@@ -9,13 +9,12 @@ window.addEventListener("DOMContentLoaded", function () {
       .then((v) => {
         if(!currentVersion) renderVersion(v);
         if (currentVersion && v !== currentVersion) {
-          location.reload(true);
+          loadfresh();
         }
         currentVersion = v;
       });
   }
 
-  setInterval(checkVersion, 30000);
   function renderVersion(v) {
     if (document.getElementById("version")) {
       hwapi("#version").h(v);
@@ -24,5 +23,13 @@ window.addEventListener("DOMContentLoaded", function () {
       vEl.id = "version";
     }
   }
+
+  loadfresh = () => {
+    const url = new URL(window.location);
+    url.searchParams.set('reload', Date.now());
+    window.location.href = url;
+  };
+
   checkVersion();
+  setInterval(checkVersion, 30000);
 });
