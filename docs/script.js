@@ -9,7 +9,9 @@ window.addEventListener("DOMContentLoaded", function () {
       .then((v) => {
         if(!currentVersion) renderVersion(v);
         if (currentVersion && v !== currentVersion) {
+          renderVersion(v);
           loadfresh();
+          hwPanel("<b>Updating to " + v + "</b>", "please wait a moment...");
         }
         currentVersion = v;
       });
