@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-rule Divisibility Bands</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(30, 40px);
+      gap: 3px;
+      margin-top: 12px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      box-sizing: border-box;
+    }
+
+    .cell.prime {
+      color: #3b0500;
+      border : 1px solid #f28b82;
+      border-radius: 50%;
+      background: #b09e9e!important;
+    }
+
+    /* colors */
+    .c2 { background: #f28b82; }   /* %2 */
+    .c3 { background: #aecbfa; }   /* %3 */
+    .c6 { background: #fff475; }   /* not 6k±1 */
+  </style>
+</head>
+
+<body>
+<h1>Prime Numbers</h1>
+<h3>Layered rule visualization using Divisibility Bands</h3>
+<p>Each color band = one rule applied</p>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  const grid = document.getElementById("grid");
+    function isPrime(n) {
+      if (n <= 1) return false;
+      if (n <= 3) return true;
+      if (n % 2 === 0 || n % 3 === 0) return false;
+
+      for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+      }
+      return true;
+    }
+
+  function bands(colors) {
+    const size = 16.66 // 100 / colors.length;
+    return `linear-gradient(
+      45deg,
+      ${colors.map((c, i) =>
+        `${c} ${i * size}% ${(i + 1) * size}%`
+      ).join(",")}
+    )`;
+  }
+
+  for (let n = 1; n <= 6000; n++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.textContent = n;
+    grid.appendChild(cell);
+
+    const layers = [];
+    if(isPrime(n)) cell.classList.add("prime")
+    if(n <= 3) continue
+
+    if (n % 2 === 0) {layers.push("#f28b82")} else layers.push("#fff"); // even
+    if (n % 3 === 0) {layers.push("#aecbfa")} else layers.push("#fff"); // divisible by 3
+    if (n>5 && n % 5 === 0) {layers.push("#d3d3d3")} else layers.push("#fff"); // divisible by 5
+    if (n>7 && n % 7 === 0) {layers.push("#d3d")} else layers.push("#fff"); // divisible by 7
+    if (n>11 && n % 11 === 0) {layers.push("#d33")} else layers.push("#fff"); // divisible by 11
+    if (n>13 && n % 13 === 0) {layers.push("#33d")} else layers.push("#fff"); // divisible by 13
+    // if (n > 3 && !(n % 6 === 1 || n % 6 === 5))
+    //   layers.push("#fff475"); // rejected by 6k±1
+      layers.push("#fff"); // rejected by 6k±1
+
+    if (layers.length > 0) {
+      cell.style.background = bands(layers);
+    }
+
+  }
+</script>
+
+</body>
+</html>

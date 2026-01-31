@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>6k ± 1 Filter</title>
+
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 20px;
+      }
+
+      h2 {
+        margin-bottom: 10px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(20, 40px);
+        gap: 4px;
+      }
+
+      .cell {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #aaa;
+        font-size: 13px;
+      }
+
+      .filtered {
+        background: #e0e0e0;
+        color: #777;
+      }
+
+      .sixk {
+        background: #cfe3ff;
+        font-weight: 600;
+      }
+
+      .prime {
+        font-weight: 600;
+        border: 1px solid #930000;
+        border-radius: 4px;
+        background-color: #77777798;
+      }
+      .obvious {
+        background: #e1e1e1;
+        }
+    </style>
+  </head>
+
+  <body>
+    <h2>Numbers of the form 6k ± 1</h2>
+    <p>Blue cells survive the 6k filter.</p>
+
+    <div class="grid" id="grid"></div>
+
+    <script>
+      function isPrime(n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 === 0 || n % 3 === 0) return false;
+
+        for (let i = 5; i * i <= n; i += 6) {
+          if (n % i === 0 || n % (i + 2) === 0) return false;
+        }
+        return true;
+      }
+      const grid = document.getElementById("grid");
+
+      for (let n = 1; n <= 500; n++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = n;
+
+        if (isPrime(n)) {
+          cell.classList.add("prime");
+        }
+
+        if (n > 3 && (n % 6 === 1 || n % 6 === 5)) {
+          cell.classList.add("sixk");
+        } else  {
+          cell.classList.add("filtered");
+        }
+
+        if ( n > 3 && (n % 3 === 0 || n % 5 === 0)) {
+          cell.classList.add("obvious");
+        } 
+
+        grid.appendChild(cell);
+      }
+    </script>
+  </body>
+</html>

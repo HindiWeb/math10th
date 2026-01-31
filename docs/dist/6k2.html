@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Layered Sieve Visualization</title>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(20, 40px);
+      gap: 4px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      background: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h3>Layered divisibility shading</h3>
+<p>Darker = more “composite pressure”</p>
+
+<div class="grid" id="grid"></div>
+
+<script>
+  const grid = document.getElementById("grid");
+
+  for (let n = 1; n <= 200; n++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.textContent = n;
+
+    let opacity = 0;
+
+    if (n > 3 && n % 2 === 0) opacity += 0.2;
+    if (n > 3 && n % 3 === 0) opacity += 0.2;
+    if (n > 3 && !(n % 6 === 1 || n % 6 === 5)) opacity += 0.2;
+
+    cell.style.background = `rgba(0, 150, 0, ${opacity})`;
+
+    grid.appendChild(cell);
+  }
+</script>
+
+</body>
+</html>

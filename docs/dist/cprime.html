@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composite Numbers Chart</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .title {
+      background: #f4c20d;
+      padding: 10px 18px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .legend {
+      font-size: 14px;
+    }
+
+    .box {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #555;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
+    .prime-box {
+      background: #e6a21a;
+    }
+
+    table {
+      border-collapse: collapse;
+      border: 1px solid #999;
+      margin-bottom: 15px;
+    }
+
+    td {
+      width: 45px;
+      height: 45px;
+      text-align: center;
+      vertical-align: middle;
+      border: 1px solid #999;
+    }
+
+    .prime {
+      background: #e6a21a;
+    }
+
+    .composite {
+      background: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="title">Composite Numbers Chart</div>
+    <div class="legend">
+      <span class="box prime-box"></span> Prime Numbers
+      &nbsp;&nbsp;
+      <span class="box"></span> Composite Numbers
+    </div>
+  </div>
+
+  <table>
+    <tbody id="grid"></tbody>
+  </table>
+
+  <script>
+    function isPrime(n) {
+      if (n <= 1) return false;
+      if (n <= 3) return true;
+      if (n % 2 === 0 || n % 3 === 0) return false;
+
+      for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+      }
+      return true;
+    }
+
+    var grid = document.getElementById("grid");
+    let number = 1;
+
+    for (let row = 0; row < 50; row++) {
+      const tr = document.createElement("tr");
+
+      if (row % 10 === 0) {
+        var grid = document.createElement("table");
+        document.body.appendChild(grid);
+      }
+
+      for (let col = 0; col < 10; col++) {
+        const td = document.createElement("td");
+        td.textContent = number;
+
+        if (isPrime(number)) {
+          td.className = "prime";
+        } else {
+          td.className = "composite";
+        }
+
+        tr.appendChild(td);
+        number++;
+      }
+
+      grid.appendChild(tr);
+    }
+  </script>
+
+</body>
+</html>
