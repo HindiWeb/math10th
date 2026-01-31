@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-rule Divisibility Bands</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(30, 40px);
+      gap: 3px;
+      margin-top: 12px;
+      max-width: 100%;
+      overflow-x: scroll;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      box-sizing: border-box;
+    }
+
+    .cell.prime {
+      color: #3b0500;
+      border : 1px solid #f28b82;
+      border-radius: 50%;
+      /* background: #b09e9e7f!important; */
+    }
+    .cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+  background: #fff;
+  transition:
+    background 400ms ease,
+    transform 300ms ease,
+    border-radius 300ms ease;
+}
+
+.cell.appear {
+  transform: scale(0.8);
+}
+
+.cell.ready {
+  transform: scale(1);
+}
+
+.cell.prime {
+  border: 1px solid #f28b82;
+  border-radius: 50%;
+}
+
+  </style>
+
+</head>
+
+<body>
+<h1>Prime Numbers</h1>
+<h3>Layered rule visualization using Divisibility Bands</h3>
+<p>Each color band = one rule applied</p>
+
+<div class="grid" id="grid"></div>
+
+<script>
+    const rules = [
+  { mod: 2, color: "#f28b82", min: 2 },
+  { mod: 3, color: "#aecbfa", min: 3 },
+  { mod: 5, color: "#d3d3d3", min: 5 },
+  { mod: 7, color: "#d3d", min: 7 },
+  { mod: 11, color: "#d33", min: 11 },
+  { mod: 13, color: "#33dd", min: 13 },
+  { mod: 17, color: "#dd2", min: 17 },
+];
+
+    function isPrime(n) {
+      if (n <= 1) return false;
+      if (n <= 3) return true;
+      if (n % 2 === 0 || n % 3 === 0) return false;
+
+      for (let i = 5; i * i <= n; i += 6) {
+        if (n % i === 0 || n % (i + 2) === 0) return false;
+      }
+      return true;
+    }
+
+  function bands(colors) {
+    const size = 10 // 100 / colors.length;
+    return `linear-gradient(
+      45deg,
+      ${colors.map((c, i) =>
+        `${c} ${i * size}% ${(i + 1) * size}%`
+      ).join(",")}
+    )`;
+  }
+//   const grid = document.getElementById("grid");
+
+//   for (let n = 1; n <= 900; n++) {
+//     const cell = document.createElement("div");
+//     cell.className = "cell";
+//     cell.textContent = n;
+//     grid.appendChild(cell);
+
+//     const layers = ['#fff'];
+//     if(isPrime(n)) cell.classList.add("prime")
+//     // if(n <= 3) continue
+
+//     if (n % 2 === 0) {layers.push("#f28b82")} else layers.push("#fff"); // even
+//     if (n % 3 === 0) {layers.push("#aecbfa")} else layers.push("#fff"); // divisible by 3
+//     if (n>5 && n % 5 === 0) {layers.push("#d3d3d3")} else layers.push("#fff"); // divisible by 5
+//     if (n>7 && n % 7 === 0) {layers.push("#d3d")} else layers.push("#fff"); // divisible by 7
+//     if (n>11 && n % 11 === 0) {layers.push("#d33")} else layers.push("#fff"); // divisible by 11
+//     if (n>13 && n % 13 === 0) {layers.push("#33dd")} else layers.push("#fff"); // divisible by 13
+//     if (n>17 && n % 17 === 0) {layers.push("#dd2")} else layers.push("#fff"); // divisible by 17
+//       layers.push("#fff"); 
+
+//     if (layers.length > 0) {
+//       cell.style.background = bands(layers);
+//     }
+
+//   }
+
+const grid = document.getElementById("grid");
+const cells = [];
+
+function createCell(n) {
+  const cell = document.createElement("div");
+  cell.className = "cell appear";
+  cell.textContent = n;
+  cell.dataset.n = n;
+  cell.dataset.layers = JSON.stringify(["#fff"]);
+  grid.appendChild(cell);
+
+  requestAnimationFrame(() => {
+    cell.classList.add("ready");
+  });
+
+  return cell;
+}
+
+let current = 1;
+const MAX = 300;
+
+const buildInterval = setInterval(() => {
+  const cell = createCell(current);
+  cells.push(cell);
+  current++;
+
+  if (current > MAX) {
+    clearInterval(buildInterval);
+    applyRulesAnimated();
+  }
+}, 12); // speed of number appearance
+
+function bands(colors) {
+  const size = 10;//0 / colors.length;
+  return `linear-gradient(
+    90deg,
+    ${colors.map((c, i) =>
+      `${c} ${i * size}% ${(i + 1) * size}%`
+    ).join(",")}
+  )`;
+}
+
+/**
+ * Applies a rule to the cells in the grid. The rule is defined by the current ruleIndex.
+ * The rule is applied to each cell in order, starting from the top left and moving right then down.
+ * If the ruleIndex is greater than or equal to the number of rules, the function will instead call highlightPrimes.
+ * @param {number} ruleIndex - The index of the rule to apply. Defaults to 0.
+ */
+function applyRule(ruleIndex = 0) {
+  if (ruleIndex >= rules.length) {
+    highlightPrimes();
+    return;
+  }
+
+  const rule = rules[ruleIndex];
+  let i = 0;
+
+  const wave = setInterval(() => {
+    const cell = cells[i];
+    const n = Number(cell.dataset.n);
+    let layers = JSON.parse(cell.dataset.layers);
+
+    if ((!rule.min || n > rule.min) && n % rule.mod === 0) {
+      layers.push(rule.color);
+      layers.push("#fff");
+
+    } else {
+      layers.push("#fff");
+    }
+
+    cell.dataset.layers = JSON.stringify(layers);
+    cell.style.background = bands(layers);
+
+    i++;
+    if (i >= cells.length) {
+      clearInterval(wave);
+      setTimeout(() => applyRule(ruleIndex + 1), 400);
+    }
+  }, 30); // speed of rule sweep
+}
+
+function applyRulesAnimated() {
+  applyRule(0);
+}
+function highlightPrimes() {
+  let i = 0;
+  const primeWave = setInterval(() => {
+    const cell = cells[i];
+    const n = Number(cell.dataset.n);
+
+    if (isPrime(n)) {
+      cell.classList.add("prime");
+    }
+
+    i++;
+    if (i >= cells.length) clearInterval(primeWave);
+  }, 40);
+}
+
+</script>
+
+</body>
+</html>
