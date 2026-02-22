@@ -42,11 +42,13 @@ img {
 <script src="https://hindiweb.github.io/math10th/script.js"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
-    hwPanel('<div id="timer"></div>');
     // your code here
     (function() {
         const text = document.querySelector('.markdown-preview p')?.innerText || '';
-        const time = Number(text.match(/Time:\s*(\d+)/)?.[1] ?? 45);
+        timeText = text.match(/Time:\s*(\d+)/)?.[1];
+        if (!timeText) return;
+        hwPanel('<div id="timer"></div>');
+        const time = Number(timeText??45);
 
         const m = time;         // max count in minutes
         const t = m + 10;    // stale limit in minutes
@@ -212,7 +214,7 @@ img {
 (b) infinite number of solutions<br>
 (c) a unique solution<br>
 (d) two solutions</p>
-<p><strong>Questions number 19 and 20 are Assertion - Reason based questions (select one of (a)–(d)):</strong><br>
+<p><strong>Following questions are Assertion - Reason based questions (select one of (a)–(d)):</strong><br>
 (a) Both A and R are true and R is the correct explanation of A.<br>
 (b) Both A and R are true but R is not the correct explanation of A.<br>
 (c) A is true but R is false.<br>

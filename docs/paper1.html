@@ -42,11 +42,13 @@ img {
 <script src="https://hindiweb.github.io/math10th/script.js"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
-    hwPanel('<div id="timer"></div>');
     // your code here
     (function() {
         const text = document.querySelector('.markdown-preview p')?.innerText || '';
-        const time = Number(text.match(/Time:\s*(\d+)/)?.[1] ?? 45);
+        timeText = text.match(/Time:\s*(\d+)/)?.[1];
+        if (!timeText) return;
+        hwPanel('<div id="timer"></div>');
+        const time = Number(timeText??45);
 
         const m = time;         // max count in minutes
         const t = m + 10;    // stale limit in minutes
@@ -212,7 +214,7 @@ img {
 (a) <span class="mathjax-exps">\(\dfrac{1}{7}\)</span><br>
 (b) <span class="mathjax-exps">\(\dfrac{2}{7}\)</span><br>
 (c) <span class="mathjax-exps">\(\dfrac{1}{15}\)</span><br>
-(e) <span class="mathjax-exps">\(\dfrac{1}{6}\)</span></p>
+(d) <span class="mathjax-exps">\(\dfrac{1}{6}\)</span></p>
 </li>
 <li>
 <p>A card is drawn from a well-shuffled deck of 52 playing cards. The probability of getting a king of red colour is :<br>
